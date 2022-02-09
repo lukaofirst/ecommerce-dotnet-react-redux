@@ -11,8 +11,8 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import axios from 'axios';
 import { Product } from '../../app/models/product';
+import agent from '../../app/api/agent';
 
 export default function ProductDetails() {
     const { id } = useParams<{ id: string }>();
@@ -21,9 +21,8 @@ export default function ProductDetails() {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        axios
-            .get(`https://localhost:5001/api/products/${id}`)
-            .then((response) => setProduct(response.data))
+        agent.Catalog.details(parseInt(id))
+            .then((response) => setProduct(response))
             .catch((err) => console.log(err))
             .finally(() => setLoading(false));
     }, [id]);
@@ -49,26 +48,28 @@ export default function ProductDetails() {
                 </Typography>
                 <TableContainer>
                     <Table>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>{product.name}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Description</TableCell>
-                            <TableCell>{product.description}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Type</TableCell>
-                            <TableCell>{product.type}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Brand</TableCell>
-                            <TableCell>{product.brand}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Quantity in stock</TableCell>
-                            <TableCell>{product.quantityInStock}</TableCell>
-                        </TableRow>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>{product.name}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Description</TableCell>
+                                <TableCell>{product.description}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Type</TableCell>
+                                <TableCell>{product.type}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Brand</TableCell>
+                                <TableCell>{product.brand}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Quantity in stock</TableCell>
+                                <TableCell>{product.quantityInStock}</TableCell>
+                            </TableRow>
+                        </TableBody>
                     </Table>
                 </TableContainer>
             </Grid>
