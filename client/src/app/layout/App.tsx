@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Catalog from '../../features/catalog/Catalog';
 import Header from './Header';
 import {
@@ -17,9 +17,29 @@ import 'react-toastify/dist/ReactToastify.css';
 import ServerError from '../errors/ServerError';
 import NotFound from '../errors/NotFound';
 import BasketPage from '../../features/basket/BasketPage';
+import { useStoreContext } from '../context/StoreContext';
+import { getCookie } from '../util/util';
+import agent from '../api/agent';
+import LoadingComponent from './LoadingComponent';
 
 function App() {
-    const [darkMode, setDarkMode] = useState<boolean>(false);
+    const { setBasket } = useStoreContext();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const buyerId = getCookie('buyerId');
+        if (buyerId) {
+            agent.Basket.get()
+                .then((basket) => setBasket(basket))
+                .catch((error) => console.log(error))
+                .finally(() => setLoading(false));
+        } else {
+            setLoading(false);
+        }
+    }, [setBasket]);
+
+    const [darkMode, setDarkMode] = useState(false);
+
     const paletteType = darkMode ? 'dark' : 'light';
 
     const theme = createTheme({
@@ -31,9 +51,11 @@ function App() {
         },
     });
 
-    const handleThemeChange = () => {
-        setDarkMode((prevState) => !prevState);
-    };
+    function handleThemeChange() {
+        setDarkMode(!darkMode);
+    }
+
+    if (loading) return <LoadingComponent message='Initialising app...' />;
 
     return (
         <ThemeProvider theme={theme}>
@@ -46,8 +68,8 @@ function App() {
             <Header handleThemeChange={handleThemeChange} />
             <Container>
                 <Switch>
-                    <Route path='/' exact component={HomePage} />
-                    <Route path='/catalog' exact component={Catalog} />
+                    <Route exact path='/' component={HomePage} />
+                    <Route exact path='/catalog' component={Catalog} />
                     <Route path='/catalog/:id' component={ProductDetails} />
                     <Route path='/about' component={AboutPage} />
                     <Route path='/contact' component={ContactPage} />
