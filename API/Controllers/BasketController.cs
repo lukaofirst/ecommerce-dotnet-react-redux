@@ -18,28 +18,13 @@ namespace API.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetBasket")]
         public async Task<ActionResult<BasketDTO>> GetBasket()
         {
             var basket = await RetrieveBasket();
 
             if (basket == null) return NotFound();
-
-            return new BasketDTO
-            {
-                Id = basket.Id,
-                BuyerId = basket.BuyerId,
-                Items = basket.Items.Select(item => new BasketItemDTO
-                {
-                    ProductId = item.ProductId,
-                    Name = item.Product.Name,
-                    Price = item.Product.Price,
-                    PictureUrl = item.Product.PictureUrl,
-                    Type = item.Product.Type,
-                    Brand = item.Product.Brand,
-                    Quantity = item.Quantity
-                }).ToList()
-            };
+            return MapBasketToDTO(basket);
         }
 
         [HttpPost]
@@ -59,7 +44,7 @@ namespace API.Controllers
             // save changes
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return StatusCode(201);
+            if (result) return CreatedAtRoute("GetBasket", MapBasketToDTO(basket));
 
             return BadRequest(new ProblemDetails { Title = "Problem saving item to basket" });
         }
@@ -103,6 +88,25 @@ namespace API.Controllers
             _context.Baskets.Add(basket);
 
             return basket;
+        }
+
+        private static ActionResult<BasketDTO> MapBasketToDTO(Basket basket)
+        {
+            return new BasketDTO
+            {
+                Id = basket.Id,
+                BuyerId = basket.BuyerId,
+                Items = basket.Items.Select(item => new BasketItemDTO
+                {
+                    ProductId = item.ProductId,
+                    Name = item.Product.Name,
+                    Price = item.Product.Price,
+                    PictureUrl = item.Product.PictureUrl,
+                    Type = item.Product.Type,
+                    Brand = item.Product.Brand,
+                    Quantity = item.Quantity
+                }).ToList()
+            };
         }
     }
 }
