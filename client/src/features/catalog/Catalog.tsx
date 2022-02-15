@@ -9,10 +9,18 @@ export default function Catalog() {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        let mounted = true;
+
         agent.Catalog.list()
-            .then((products) => setProducts(products))
+            .then((products) => {
+                if (mounted) setProducts(products);
+            })
             .catch((error) => console.log(error))
             .finally(() => setLoading(false));
+
+        return () => {
+            mounted = false;
+        };
     }, []);
 
     if (loading) return <LoadingComponent message='Loading products...' />;
