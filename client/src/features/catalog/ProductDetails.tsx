@@ -12,8 +12,6 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { Product } from '../../app/models/product';
-import agent from '../../app/api/agent';
 import NotFound from '../../app/errors/NotFound';
 import LoadingComponent from '../../app/layout/LoadingComponent';
 import { LoadingButton } from '@mui/lab';
@@ -22,15 +20,18 @@ import {
     addBasketItemAsync,
     removeBasketItemAsync,
 } from '../basket/basketSlice';
+import { fetchProductAsync, productSelectors } from './catalogSlice';
 
 export default function ProductDetails() {
-    const { basket, status } = useAppSelector((state) => state.basket);
+    const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
 
-    const { id } = useParams<{ id: string }>();
+    const { basket, status } = useAppSelector((state) => state.basket);
+    const { status: productStatus } = useAppSelector((state) => state.catalog);
+    const product = useAppSelector((state) =>
+        productSelectors.selectById(state, id)
+    );
 
-    const [product, setProduct] = useState<Product>();
-    const [loading, setLoading] = useState<boolean>(true);
     const [quantity, setQuantity] = useState<number>(0);
 
     const item = basket?.items.find((i) => i.productId === product?.id);
@@ -38,11 +39,8 @@ export default function ProductDetails() {
     useEffect(() => {
         if (item) setQuantity(item.quantity);
 
-        agent.Catalog.details(parseInt(id))
-            .then((response) => setProduct(response))
-            .catch((err) => console.log(err))
-            .finally(() => setLoading(false));
-    }, [id, item]);
+        if (!product) dispatch(fetchProductAsync(parseInt(id)));
+    }, [id, item, dispatch, product]);
 
     function handleInputChange(event: any) {
         if (event.target.value >= 0) {
@@ -72,7 +70,7 @@ export default function ProductDetails() {
         }
     }
 
-    if (loading)
+    if (productStatus.includes('pending'))
         return <LoadingComponent message='Loading product details...' />;
 
     if (!product) return <NotFound />;
