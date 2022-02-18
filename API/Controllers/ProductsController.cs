@@ -41,13 +41,22 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<ActionResult<Product>> GetById(int id)
         {
             var product = await _context.Products.FindAsync(id);
 
             if (product == null) return NotFound();
 
             return Ok(product);
+        }
+
+        [HttpGet("filters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            var brands = await _context.Products.Select(p => p.Brand).Distinct().ToListAsync();
+            var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
+
+            return Ok(new { brands, types });
         }
     }
 }
