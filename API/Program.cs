@@ -1,59 +1,44 @@
+using System;
+using System.Threading.Tasks;
 using API.Data;
-using API.Middleware;
+using API.Entities;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<StoreContext>(opt =>
+namespace API
 {
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
+            using var scope = host.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-builder.Services.AddCors();
+            try
+            {
+                await context.Database.MigrateAsync();
+                await DbInitializer.Initialize(context, userManager);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Problem migrating data");
+            }
 
-var app = builder.Build();
-using var scope = app.Services.CreateScope();
+            await host.RunAsync();
+        }
 
-var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
-var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-try
-{
-    context.Database.Migrate();
-
-    DbInitializer.Initialize(context);
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
 }
-catch (Exception ex)
-{
-    logger.LogError(ex, "Problem migrating data");
-}
-
-app.UseMiddleware<ExceptionMiddleware>();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseRouting();
-app.UseCors(opt =>
-{
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
-});
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

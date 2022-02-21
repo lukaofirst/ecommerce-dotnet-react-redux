@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj": {}
+    "d:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj": {}
   },
   "projects": {
-    "D:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj": {
+    "d:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj",
+        "projectUniqueName": "d:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "D:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj",
+        "projectPath": "d:\\My Projects\\ecommerce-react-dotnet\\API\\API.csproj",
         "packagesPath": "C:\\Users\\lucas\\.nuget\\packages\\",
-        "outputPath": "D:\\My Projects\\ecommerce-react-dotnet\\API\\obj\\",
+        "outputPath": "d:\\My Projects\\ecommerce-react-dotnet\\API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\lucas\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,14 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
