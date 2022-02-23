@@ -8,20 +8,27 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Paper } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useForm, FieldValues } from 'react-hook-form';
-import agent from '../../app/api/agent';
 import { LoadingButton } from '@mui/lab';
+import { useAppDispatch } from '../../app/store/configureStore';
+import { signInUser } from './accountSlice';
 
 export default function Login() {
+    const history = useHistory();
+    const dispatch = useAppDispatch();
+
     const {
         register,
         handleSubmit,
-        formState: { isSubmitting },
-    } = useForm();
+        formState: { isSubmitting, errors, isValid },
+    } = useForm({
+        mode: 'all',
+    });
 
     async function submitForm(data: FieldValues) {
-        await agent.Account.login(data);
+        await dispatch(signInUser(data));
+        history.push('/catalog');
     }
 
     return (
@@ -53,7 +60,11 @@ export default function Login() {
                     fullWidth
                     label='Username'
                     autoFocus
-                    {...register('username')}
+                    {...register('username', {
+                        required: 'Username is required',
+                    })}
+                    error={!!errors.username}
+                    helperText={errors?.username?.message}
                 />
                 <TextField
                     margin='normal'
@@ -61,7 +72,11 @@ export default function Login() {
                     fullWidth
                     label='Password'
                     type='password'
-                    {...register('password')}
+                    {...register('password', {
+                        required: 'Password is required',
+                    })}
+                    error={!!errors.password}
+                    helperText={errors?.password?.message}
                 />
                 <FormControlLabel
                     control={<Checkbox value='remember' color='primary' />}
@@ -69,6 +84,7 @@ export default function Login() {
                 />
                 <LoadingButton
                     loading={isSubmitting}
+                    disabled={!isValid}
                     type='submit'
                     fullWidth
                     variant='contained'
