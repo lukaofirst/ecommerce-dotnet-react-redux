@@ -71,11 +71,11 @@ export default function AboutPage() {
                     Test Validation Error
                 </Button>
             </ButtonGroup>
-            {validationErrors && (
+            {validationErrors!.length > 0 && (
                 <Alert severity='error'>
                     <AlertTitle>Validation Errors</AlertTitle>
                     <List>
-                        {validationErrors.map((error) => (
+                        {validationErrors!.map((error) => (
                             <ListItem key={error}>
                                 <ListItemText>{error}</ListItemText>
                             </ListItem>
