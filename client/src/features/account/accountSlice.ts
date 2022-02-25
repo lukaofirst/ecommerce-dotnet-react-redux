@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import agent from '../../app/api/agent';
 import { User } from '../../app/models/user';
 import { customHistory } from '../../index';
+import { setBasket } from '../basket/basketSlice';
 
 interface AccountState {
     user: User | null;
@@ -17,7 +18,11 @@ export const signInUser = createAsyncThunk<User, FieldValues>(
     'account/signInUser',
     async (data, thunkAPI) => {
         try {
-            const user = await agent.Account.login(data);
+            const userDTO = await agent.Account.login(data);
+
+            const { basket, ...user } = userDTO;
+
+            if (basket) thunkAPI.dispatch(setBasket(basket));
 
             localStorage.setItem('user', JSON.stringify(user));
 
@@ -34,7 +39,11 @@ export const fetchCurrentUser = createAsyncThunk<User>(
         thunkAPI.dispatch(setUser(JSON.parse(localStorage.getItem('user')!)));
 
         try {
-            const user = await agent.Account.currentUser();
+            const userDTO = await agent.Account.currentUser();
+
+            const { basket, ...user } = userDTO;
+
+            if (basket) thunkAPI.dispatch(setBasket(basket));
 
             localStorage.setItem('user', JSON.stringify(user));
 
