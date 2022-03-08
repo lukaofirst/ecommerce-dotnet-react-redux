@@ -5,6 +5,8 @@ import { createBrowserHistory } from 'history';
 import App from './app/layout/App';
 import { Provider } from 'react-redux';
 import { store } from './app/store/configureStore';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 export const customHistory = createBrowserHistory();
 

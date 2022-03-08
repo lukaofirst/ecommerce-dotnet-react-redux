@@ -50,7 +50,7 @@ export default function Header({ handleThemeChange }: IHeaderProps) {
     );
 
     return (
-        <AppBar position='static' sx={{ mb: 4 }}>
+        <AppBar position='static'>
             <Toolbar
                 sx={{
                     display: 'flex',
