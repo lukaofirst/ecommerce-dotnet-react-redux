@@ -87,6 +87,15 @@ export default function Header({ handleThemeChange }: IHeaderProps) {
                             {title.toUpperCase()}
                         </ListItem>
                     ))}
+                    {user && (
+                        <ListItem
+                            component={NavLink}
+                            to={'/inventory'}
+                            sx={navStyles}
+                        >
+                            INVENTORY
+                        </ListItem>
+                    )}
                 </List>
 
                 <Box display='flex' alignItems='center'>
