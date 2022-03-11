@@ -2,9 +2,7 @@
 
 ## Concepts used in this project
 
-<br />
-
-### Front-end
+### :desktop_computer: Front-end
 
 -   React
 -   TypeScript
@@ -15,7 +13,7 @@
 -   react-router-dom
 -   axios
 
-### Back-end
+### :gear: Back-end
 
 -   .NET Core (v5 and migrating to v6)
 -   Entity Framework Core
