@@ -1,0 +1,11 @@
+global using System.Text;
+global using API.Data;
+global using API.Entities;
+global using API.Middleware;
+global using API.RequestHelpers;
+global using API.Services;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.IdentityModel.Tokens;
+global using Microsoft.OpenApi.Models;
