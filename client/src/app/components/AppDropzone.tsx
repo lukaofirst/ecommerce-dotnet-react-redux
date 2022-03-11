@@ -45,6 +45,7 @@ export default function AppDropzone(props: Props) {
         <div {...getRootProps()}>
             <FormControl
                 style={isDragActive ? { ...dzStyles, ...dzActive } : dzStyles}
+                error={!!fieldState.error}
             >
                 <input {...getInputProps()} />
                 <UploadFile sx={{ fontSize: '100px' }} />

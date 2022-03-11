@@ -1,4 +1,5 @@
 import { Edit, Delete } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 import {
     Box,
     Button,
@@ -12,12 +13,13 @@ import {
     Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import agent from '../../app/api/agent';
 import AppPagination from '../../app/components/AppPagination';
 import useProducts from '../../app/hooks/useProducts';
 import { Product } from '../../app/models/product';
 import { useAppDispatch } from '../../app/store/configureStore';
 import { currencyFormat } from '../../app/util/util';
-import { setPageNumber } from '../catalog/catalogSlice';
+import { removeProduct, setPageNumber } from '../catalog/catalogSlice';
 import ProductForm from './ProductForm';
 
 export default function Inventory() {
@@ -30,9 +32,22 @@ export default function Inventory() {
         undefined
     );
 
+    const [loading, setLoading] = useState(false);
+    const [target, setTarget] = useState(0);
+
     function handleSelectProduct(product: Product) {
         setSelectedProduct(product);
         setEditMode(true);
+    }
+
+    function handleDeleteProduct(id: number) {
+        setLoading(true);
+        setTarget(id);
+
+        agent.Admin.deleteProduct(id)
+            .then(() => dispatch(removeProduct(id)))
+            .catch((error) => console.log(error))
+            .finally(() => setLoading(false));
     }
 
     function cancelEdit() {
@@ -118,9 +133,15 @@ export default function Inventory() {
                                         }
                                         startIcon={<Edit />}
                                     />
-                                    <Button
+                                    <LoadingButton
+                                        loading={
+                                            loading && target === product.id
+                                        }
                                         startIcon={<Delete />}
                                         color='error'
+                                        onClick={() =>
+                                            handleDeleteProduct(product.id)
+                                        }
                                     />
                                 </TableCell>
                             </TableRow>
