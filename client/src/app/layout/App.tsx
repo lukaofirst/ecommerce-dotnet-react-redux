@@ -97,6 +97,7 @@ function App() {
                             />
                             <PrivateRoute path='/orders' component={Orders} />
                             <PrivateRoute
+                                roles={['Admin']}
                                 path='/inventory'
                                 component={Inventory}
                             />

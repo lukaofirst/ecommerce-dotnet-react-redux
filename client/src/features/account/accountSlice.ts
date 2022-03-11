@@ -69,7 +69,15 @@ export const accountSlice = createSlice({
             customHistory.push('/');
         },
         setUser: (state, action) => {
-            state.user = action.payload;
+            let claims = JSON.parse(atob(action.payload.token.split('.')[1]));
+            let roles =
+                claims[
+                    'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+                ];
+            state.user = {
+                ...action.payload,
+                roles: typeof roles === 'string' ? [roles] : roles,
+            };
         },
     },
     extraReducers: (builder) => {
@@ -83,7 +91,17 @@ export const accountSlice = createSlice({
         builder.addMatcher(
             isAnyOf(signInUser.fulfilled, fetchCurrentUser.fulfilled),
             (state, action) => {
-                state.user = action.payload;
+                let claims = JSON.parse(
+                    atob(action.payload.token.split('.')[1])
+                );
+                let roles =
+                    claims[
+                        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+                    ];
+                state.user = {
+                    ...action.payload,
+                    roles: typeof roles === 'string' ? [roles] : roles,
+                };
             }
         );
 

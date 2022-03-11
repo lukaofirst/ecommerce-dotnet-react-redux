@@ -87,7 +87,7 @@ export default function Header({ handleThemeChange }: IHeaderProps) {
                             {title.toUpperCase()}
                         </ListItem>
                     ))}
-                    {user && (
+                    {user && user.roles?.includes('Admin') && (
                         <ListItem
                             component={NavLink}
                             to={'/inventory'}
